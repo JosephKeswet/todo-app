@@ -28,6 +28,8 @@ export class AuthService {
 
       delete user.password;
       return {
+        success: true,
+        msg: 'You have successfully signed up',
         userInfo: user,
       };
     } catch (error) {
@@ -40,34 +42,35 @@ export class AuthService {
     }
   }
 
-  async signIn(dto:LoginDto) {
-      // find the user by email
-      const user = await this.prisma.user.findUnique({
-        where: { 
-          email: dto.email
-        }
-      });
-      // if user does not exist throw exception
-      if (!user) {
-        throw new ForbiddenException('Credentials not found');
-      }
-      // compare password
-      const pwMatches = await argon.verify(user.password, dto.password);
-      // if password incorrect throw exception
-      if (!pwMatches) {
-        throw new ForbiddenException('Password is incorrect');
-      }
-  
-      const retrievedUser = this.signToken(user.id,user.email)
+  async signIn(dto: LoginDto) {
+    // find the user by email
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+    // if user does not exist throw exception
+    if (!user) {
+      throw new ForbiddenException('Credentials not found');
+    }
+    // compare password
+    const pwMatches = await argon.verify(user.password, dto.password);
+    // if password incorrect throw exception
+    if (!pwMatches) {
+      throw new ForbiddenException('Password is incorrect');
+    }
 
-      delete user.password;
+    const retrievedUser = this.signToken(user.id, user.email);
 
-      
-        // send back user
-        return {
-            ...user,
-            accessToken:(await retrievedUser).accessToken
-        }
+    delete user.password;
+
+    // send back user
+    return {
+      success: true,
+      msg:'You have successfully signed in',
+      ...user,
+      accessToken: (await retrievedUser).accessToken,
+    };
   }
 
   async signToken(

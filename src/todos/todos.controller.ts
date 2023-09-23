@@ -1,6 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Post } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TodoDto } from './dto/todo.dto';
+import { DeleteTodoDto, TodoDto } from './dto/todo.dto';
 import { TodoService } from './todo.service';
 
 @Controller('todos')
@@ -15,6 +15,14 @@ export class TodosController {
             }
         })
         return this.todoService.createTodo(dto)
+    }
+
+    @Delete('delete')
+    @HttpCode(200)
+    deleteTodo(@Body()  dto:DeleteTodoDto){
+        const todoId = dto.id;
+   
+        return this.todoService.deleteTodo(todoId)
     }
 
 }

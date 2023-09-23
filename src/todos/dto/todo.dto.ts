@@ -17,3 +17,11 @@ export class TodoDto {
   @IsNumber()
   id:number
 }
+
+
+export class DeleteTodoDto {
+
+  @IsNotEmpty()
+  @IsNumber()
+  id:number
+}
