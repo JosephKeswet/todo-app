@@ -25,3 +25,10 @@ export class DeleteTodoDto {
   @IsNumber()
   id:number
 }
+
+export class GetUserTodoDto {
+
+  @IsNotEmpty()
+  @IsNumber()
+  id:number
+}

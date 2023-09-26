@@ -1,20 +1,21 @@
-import { Body, Controller, Delete, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { User } from '@prisma/client';
+import { GetUser } from 'src/auth/decorator';
+import { JwtGuard } from 'src/auth/guard';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { DeleteTodoDto, TodoDto } from './dto/todo.dto';
+import { DeleteTodoDto, GetUserTodoDto, TodoDto } from './dto/todo.dto';
 import { TodoService } from './todo.service';
 
 @Controller('todos')
 export class TodosController {
     constructor(private todoService:TodoService,private prisma:PrismaService){}
+    @UseGuards(JwtGuard)
 
     @Post('create')
-    createTodo(@Body()  dto:TodoDto){
-        const user = this.prisma.user.findUnique({
-            where:{
-                id:dto.id
-            }
-        })
-        return this.todoService.createTodo(dto)
+    createTodo(@GetUser('id') user:User,@Body()  dto:TodoDto){
+        
+        
+        return this.todoService.createTodo(dto,user.id)
     }
 
     @Delete('delete')
@@ -23,6 +24,12 @@ export class TodosController {
         const todoId = dto.id;
    
         return this.todoService.deleteTodo(todoId)
+    }
+
+    @Get('')
+    getTodos(@Body() dto:GetUserTodoDto) {
+        
+        return this.todoService.getTodos(dto.id)
     }
 
 }

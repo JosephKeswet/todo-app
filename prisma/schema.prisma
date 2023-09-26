@@ -30,7 +30,7 @@ model Todos {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  title String @unique
+  title String
 
   isCompleted Boolean
 
